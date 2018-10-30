@@ -1,7 +1,10 @@
-USERNAME	:=	ogin
+USERNAME	:=	login
 TEMPLATE	:=	templat[a-z]
 repository	:=	bitbucket.org/242617/blockchain.com-bruteforce
+image		:=	blockchain.com-bruteforce
+container	:=	242617/${image}
 
+all: windows macos linux
 windows: windows-setup build
 macos: macos-setup build
 linux: linux-setup build
@@ -27,9 +30,18 @@ linux-setup:
 build: test
 	GOOS=${goos} GOARCH=${goarch} \
 	go build \
-		-o ${output} \
+		-o build/${output} \
 		-ldflags " \
 			-X main.username=${USERNAME} \
 			-X main.template=${TEMPLATE} \
 		" \
 		${repository}
+
+docker:
+	docker build -t ${container} .
+	docker run \
+		-it --rm \
+		--name ${image} \
+		-v `pwd`:/build \
+		${container}
+	docker push ${container}
