@@ -18,7 +18,7 @@ const (
 )
 
 var (
-	login    string
+	username string
 	template string
 )
 
@@ -44,7 +44,7 @@ func main() {
 
 	err = client.Run(ctx, chromedp.Tasks{
 		chromedp.Navigate("https://login.blockchain.com/#/login"),
-		chromedp.SendKeys(loginSelector, login, chromedp.ByQuery),
+		chromedp.SendKeys(loginSelector, username, chromedp.ByQuery),
 	})
 	die(err)
 

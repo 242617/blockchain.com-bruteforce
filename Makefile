@@ -3,7 +3,7 @@ TEMPLATE	:=	templat[a-z]
 repository	:=	bitbucket.org/242617/blockchain.com-bruteforce
 
 windows: windows-setup build
-mac: mac-setup build
+macos: macos-setup build
 linux: linux-setup build
 
 test:
@@ -14,7 +14,7 @@ windows-setup:
 	$(eval goarch=amd64)
 	$(eval output=bruteforce.exe)
 
-mac-setup:
+macos-setup:
 	$(eval goos=darwin)
 	$(eval goarch=amd64)
 	$(eval output=bruteforce)

@@ -16,4 +16,5 @@ func TestWords(t *testing.T) {
 			t.Fatalf("combinations number: %d, needed %d", len(combinations), v.count)
 		}
 	}
+
 }
