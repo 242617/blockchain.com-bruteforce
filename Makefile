@@ -3,7 +3,6 @@ repository	:=	bitbucket.org/242617/blockchain.com-bruteforce
 image		:=	blockchain.com-bruteforce
 container	:=	242617/${image}
 
-all: windows macos linux
 windows: windows-setup build
 macos: macos-setup build
 linux: linux-setup build
