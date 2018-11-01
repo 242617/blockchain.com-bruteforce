@@ -19,7 +19,6 @@ const (
 
 var (
 	username string
-	template string
 )
 
 func main() {
@@ -50,7 +49,7 @@ func main() {
 
 	resCh, nothingCh := make(chan string), make(chan struct{})
 	go func() {
-		for password := range words(template) {
+		for password := range words() {
 			tasks := try(password, resCh)
 			err = client.Run(ctx, tasks)
 			if err != nil {

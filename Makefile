@@ -1,5 +1,4 @@
 USERNAME	:=	login
-TEMPLATE	:=	templat[a-z]
 repository	:=	bitbucket.org/242617/blockchain.com-bruteforce
 image		:=	blockchain.com-bruteforce
 container	:=	242617/${image}
@@ -33,7 +32,6 @@ build: test
 		-o build/${output} \
 		-ldflags " \
 			-X main.username=${USERNAME} \
-			-X main.template=${TEMPLATE} \
 		" \
 		${repository}
 

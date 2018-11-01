@@ -16,7 +16,7 @@ func init() {
 	lgaz = src[65:91]
 }
 
-func words(template string) <-chan string {
+func words() <-chan string {
 	ch := make(chan string)
 	go func() {
 		for sample := range generate(dgts, 1) {
