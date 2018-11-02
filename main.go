@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"regexp/syntax"
 	"time"
 
+	"github.com/alixaxel/genex"
 	"github.com/chromedp/chromedp"
 )
 
@@ -19,17 +21,26 @@ const (
 
 var (
 	username string
+	template string
 )
+
+var password string
 
 func main() {
 
+	charset, err := syntax.Parse(`[0-9a-zA-Z]`, syntax.Perl)
+	die(err)
+
+	input, err := syntax.Parse(template, syntax.Perl)
+	die(err)
+
 	start := time.Now()
-	var n uint64
+	tries, total := 0, genex.Count(input, charset, 3)
 
 	go func() {
 		for {
-			time.Sleep(time.Minute)
-			fmt.Printf("time: %s, tries: %d", time.Since(start).String(), n)
+			time.Sleep(10 * time.Second)
+			fmt.Printf("time: %s, tries: %d, total: %d, current: %s\n", time.Since(start).Round(time.Second).String(), tries, int(total), password)
 		}
 	}()
 
@@ -37,7 +48,6 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	var err error
 	client, err := chromedp.New(ctx) // , chromedp.WithLog(log.Printf)
 	die(err)
 
@@ -49,23 +59,23 @@ func main() {
 
 	resCh, nothingCh := make(chan string), make(chan struct{})
 	go func() {
-		for password := range words() {
+		for password = range words(input, charset) {
 			tasks := try(password, resCh)
 			err = client.Run(ctx, tasks)
 			if err != nil {
 				log.Println(err)
 				return
 			}
-			n++
+			tries++
 		}
 		nothingCh <- struct{}{}
 	}()
 
 	select {
 	case result := <-resCh:
-		log.Printf("password: `%s`", result)
+		fmt.Printf("password: `%s`", result)
 	case <-nothingCh:
-		log.Println("no password found")
+		fmt.Println("no password found")
 	}
 
 	err = client.Shutdown(ctx)
