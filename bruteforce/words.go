@@ -20,7 +20,9 @@ func Words(resume string, input, charset *syntax.Regexp) <-chan string {
 			if !next && word == resume {
 				next = true
 			}
-			if next {
+			if resume != "" && next {
+				ch <- word
+			} else {
 				ch <- word
 			}
 		}
