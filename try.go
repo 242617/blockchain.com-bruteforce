@@ -1,4 +1,4 @@
-package bruteforce
+package main
 
 import (
 	"context"
@@ -16,7 +16,7 @@ const (
 	SignoutSelector  = "#app > div > div.template__Nav-dNuRir.bVRcIk > div > div > div.NavbarMenu__BaseMenu-gSUDcE.eBAlO > ul > li:nth-child(4) > a > span:nth-child(1)"
 )
 
-func Try(password string, resCh chan<- string) chromedp.Tasks {
+func try(password string, resCh chan<- string) chromedp.Tasks {
 	return chromedp.Tasks{
 		chromedp.SendKeys(PasswordSelector, password, chromedp.ByQuery),
 		chromedp.WaitEnabled(SubmitSelector, chromedp.ByQuery),

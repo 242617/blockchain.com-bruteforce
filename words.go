@@ -1,4 +1,4 @@
-package bruteforce
+package main
 
 import (
 	"regexp/syntax"
@@ -6,7 +6,7 @@ import (
 	"github.com/alixaxel/genex"
 )
 
-func Words(resume string, input, charset *syntax.Regexp) <-chan string {
+func words(resume string, input, charset *syntax.Regexp) <-chan string {
 	ch, rawCh := make(chan string), make(chan string)
 	go func() {
 		genex.Generate(input, charset, 3, func(output string) {
@@ -15,13 +15,15 @@ func Words(resume string, input, charset *syntax.Regexp) <-chan string {
 		close(rawCh)
 	}()
 	go func() {
-		var next bool
+		var resumeReached bool
 		for word := range rawCh {
-			if !next && word == resume {
-				next = true
-			}
-			if resume != "" && next {
-				ch <- word
+			if resume != "" {
+				if resumeReached {
+					ch <- word
+				} else if word == resume {
+					resumeReached = true
+					ch <- word
+				}
 			} else {
 				ch <- word
 			}

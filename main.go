@@ -4,14 +4,11 @@ import (
 	"context"
 	"flag"
 	"log"
-	"os"
 	"regexp/syntax"
 	"time"
 
 	"github.com/alixaxel/genex"
 	"github.com/chromedp/chromedp"
-
-	"github.com/242617/blockchain.com-bruteforce/bruteforce"
 )
 
 var (
@@ -37,12 +34,12 @@ func main() {
 		log.Fatal("password is empty")
 	}
 
-	file, err := os.OpenFile("bruteforce.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.SetFlags(0)
-	log.SetOutput(file)
+	// file, err := os.OpenFile("bruteforce.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// log.SetFlags(0)
+	// log.SetOutput(file)
 	log.Println("start")
 	start := time.Now()
 	defer func() {
@@ -59,7 +56,7 @@ func main() {
 
 	if list {
 		log.Println("list combinations")
-		for word := range bruteforce.Words(resume, input, charset) {
+		for word := range words(resume, input, charset) {
 			log.Println(word)
 		}
 		if resume == "" {
@@ -88,14 +85,14 @@ func main() {
 
 	err = client.Run(ctx, chromedp.Tasks{
 		chromedp.Navigate("https://login.blockchain.com/#/login"),
-		chromedp.SendKeys(bruteforce.LoginSelector, username, chromedp.ByQuery),
+		chromedp.SendKeys(LoginSelector, username, chromedp.ByQuery),
 	})
 	die(err)
 
 	resCh, nothingCh := make(chan string), make(chan struct{})
 	go func() {
-		for current = range bruteforce.Words(resume, input, charset) {
-			tasks := bruteforce.Try(current, resCh)
+		for current = range words(resume, input, charset) {
+			tasks := try(current, resCh)
 			err = client.Run(ctx, tasks)
 			if err != nil {
 				log.Println(err)
