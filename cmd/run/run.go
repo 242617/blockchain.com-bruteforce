@@ -18,6 +18,7 @@ var (
 	list     bool
 	username string
 	password string
+	resume   string
 )
 
 var current string
@@ -27,6 +28,7 @@ func main() {
 	flag.BoolVar(&list, "list", false, "List mode")
 	flag.StringVar(&username, "username", "", "Username")
 	flag.StringVar(&password, "password", "", "Password mask")
+	flag.StringVar(&resume, "resume", "", "Resume from")
 	flag.Parse()
 
 	file, err := os.OpenFile("bruteforce.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -36,6 +38,10 @@ func main() {
 	log.SetFlags(log.Ltime)
 	log.SetOutput(file)
 	log.Println("start")
+	start := time.Now()
+	defer func() {
+		log.Printf("done in %s", time.Since(start).String())
+	}()
 
 	charset, err := syntax.Parse(`[0-9a-zA-Z]`, syntax.Perl)
 	die(err)
@@ -43,22 +49,27 @@ func main() {
 	input, err := syntax.Parse(password, syntax.Perl)
 	die(err)
 
-	start := time.Now()
 	attempts, total := 0, genex.Count(input, charset, 3)
 
 	if list {
 		log.Println("list combinations")
-		for word := range bruteforce.Words(input, charset) {
+		for word := range bruteforce.Words(resume, input, charset) {
 			log.Println(word)
 		}
-		log.Printf("total: %d\n", int(total))
+		if resume == "" {
+			log.Printf("total: %d\n", int(total))
+		}
 		return
 	}
 
 	go func() {
 		for {
 			time.Sleep(10 * time.Second)
-			log.Printf("time: %s, %d/%d, current: %s\n", time.Since(start).Round(time.Second).String(), attempts, int(total), current)
+			if resume == "" {
+				log.Printf("time: %s, attempts: %d/%d, current: %s\n", time.Since(start).Round(time.Second).String(), attempts, int(total), current)
+			} else {
+				log.Printf("time: %s, attempts: %d, current: %s\n", time.Since(start).Round(time.Second).String(), attempts, current)
+			}
 		}
 	}()
 
@@ -77,7 +88,7 @@ func main() {
 
 	resCh, nothingCh := make(chan string), make(chan struct{})
 	go func() {
-		for current = range bruteforce.Words(input, charset) {
+		for current = range bruteforce.Words(resume, input, charset) {
 			tasks := bruteforce.Try(current, resCh)
 			err = client.Run(ctx, tasks)
 			if err != nil {
@@ -102,7 +113,6 @@ func main() {
 	err = client.Wait()
 	die(err)
 
-	log.Printf("done in %s", time.Since(start).String())
 }
 
 func die(err error) {

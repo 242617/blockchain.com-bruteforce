@@ -6,12 +6,24 @@ import (
 	"github.com/alixaxel/genex"
 )
 
-func Words(input, charset *syntax.Regexp) <-chan string {
-	ch := make(chan string)
+func Words(resume string, input, charset *syntax.Regexp) <-chan string {
+	ch, rawCh := make(chan string), make(chan string)
 	go func() {
 		genex.Generate(input, charset, 3, func(output string) {
-			ch <- output
+			rawCh <- output
 		})
+		close(rawCh)
+	}()
+	go func() {
+		var next bool
+		for word := range rawCh {
+			if !next && word == resume {
+				next = true
+			}
+			if next {
+				ch <- word
+			}
+		}
 		close(ch)
 	}()
 	return ch
