@@ -30,7 +30,7 @@ func main() {
 	flag.StringVar(&password, "password", "", "Password mask")
 	flag.StringVar(&resume, "resume", "", "Resume from")
 	flag.Parse()
-	if username == "" {
+	if username == "" && !list {
 		log.Fatal("username is empty")
 	}
 	if password == "" {
@@ -41,7 +41,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.SetFlags(log.Ltime)
+	log.SetFlags(0)
 	log.SetOutput(file)
 	log.Println("start")
 	start := time.Now()
@@ -72,9 +72,9 @@ func main() {
 		for {
 			time.Sleep(10 * time.Second)
 			if resume == "" {
-				log.Printf("time: %s, attempts: %d/%d, current: %s\n", time.Since(start).Round(time.Second).String(), attempts, int(total), current)
+				log.Printf("[%s], attempts: %d/%d, current: %s\n", time.Since(start).Round(time.Second).String(), attempts, int(total), current)
 			} else {
-				log.Printf("time: %s, attempts: %d, current: %s\n", time.Since(start).Round(time.Second).String(), attempts, current)
+				log.Printf("[%s], attempts: %d, current: %s\n", time.Since(start).Round(time.Second).String(), attempts, current)
 			}
 		}
 	}()
