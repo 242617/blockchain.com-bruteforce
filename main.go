@@ -30,6 +30,12 @@ func main() {
 	flag.StringVar(&password, "password", "", "Password mask")
 	flag.StringVar(&resume, "resume", "", "Resume from")
 	flag.Parse()
+	if username == "" {
+		log.Fatal("username is empty")
+	}
+	if password == "" {
+		log.Fatal("password is empty")
+	}
 
 	file, err := os.OpenFile("bruteforce.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
