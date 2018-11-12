@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	list     bool
+	test     bool
 	username string
 	password string
 	resume   string
@@ -22,12 +22,12 @@ var current string
 
 func main() {
 
-	flag.BoolVar(&list, "list", false, "List mode")
+	flag.BoolVar(&test, "test", false, "Test mode")
 	flag.StringVar(&username, "username", "", "Username")
 	flag.StringVar(&password, "password", "", "Password mask")
 	flag.StringVar(&resume, "resume", "", "Resume from")
 	flag.Parse()
-	if username == "" && !list {
+	if username == "" && !test {
 		log.Fatal("username is empty")
 	}
 	if password == "" {
@@ -54,8 +54,8 @@ func main() {
 
 	attempts, total := 0, genex.Count(input, charset, 3)
 
-	if list {
-		log.Println("list combinations")
+	if test {
+		log.Println("test combinations")
 		for word := range words(resume, input, charset) {
 			log.Println(word)
 		}

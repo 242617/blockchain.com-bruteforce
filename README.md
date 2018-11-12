@@ -26,7 +26,7 @@ make windows // for Windows binary
 ## Run
 
 * `username` - blockchain.com wallet id
-* `password_mask` - password mask (regexp: e. g. `(a|b)`, `\d`, `\S`, `(A|z){2,3}`.)
+* `password_mask` - password mask (regexp: e. g. `(a|b)`, `\d`, `\S`, `(A|z){2,3}`)
 * `resume_from` - word to resume from
 
 ```
@@ -36,12 +36,12 @@ make windows // for Windows binary
     -resume={resume_from}
 ```
 
-### List mode
+### Test mode
 
-This mode is to list all combinations for testing your password mask. `username` is unnecessary in this case.
+This mode is to test all combinations for testing your password mask. `username` is unnecessary in this case.
 ```
 ./bruteforce \
     -password="{password_mask}" \
     -resume={resume_from}  \
-    -list
+    -test
 ```
