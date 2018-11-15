@@ -29,5 +29,5 @@ linux-setup:
 build: test
 	GOOS=${goos} GOARCH=${goarch} \
 	go build \
-		-o build/${output} \
+		-o ${output} \
 		${repository}

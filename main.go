@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"log"
+	"os"
 	"regexp/syntax"
 	"time"
 
@@ -34,12 +35,13 @@ func main() {
 		log.Fatal("password is empty")
 	}
 
-	// file, err := os.OpenFile("bruteforce.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// log.SetFlags(0)
-	// log.SetOutput(file)
+	file, err := os.OpenFile("bruteforce.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.SetFlags(0)
+	log.SetOutput(file)
+
 	log.Println("start")
 	start := time.Now()
 	defer func() {
